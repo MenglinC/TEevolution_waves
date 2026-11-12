@@ -1,4 +1,4 @@
-# D, For speices genes with H3K9me3 TEs 
+# D. For speices genes with H3K9me3 TEs 
 
 ## D.1
 

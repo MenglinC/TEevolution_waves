@@ -1,5 +1,27 @@
 # A
 
+## A.1 alignment
+
+#input:L1PA1-17conseq.261001.fastq
+
+```shell
+#L-INS-i
+mafft-linsi L1PA1-17conseq.261001.fastq > L1PA.LINSI.261001.fasta
+
+
+# G-INS-i
+mafft --globalpair --maxiterate 1000 \
+    L1PA1-17conseq.261001.fastq \
+    > L1PA.GINSI.261001.fasta
+
+# E-INS-i
+mafft --genafpair --maxiterate 1000 \
+    L1PA1-17conseq.261001.fastq \
+    > L1PA.EINSI.261001.fasta
+```
+
+## A.2 analyse the alignment
+
 #file:figure4a.R
 #input:L1PA.LINSI.261001.fasta
 

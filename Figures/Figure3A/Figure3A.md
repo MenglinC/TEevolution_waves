@@ -1,8 +1,41 @@
 # A.
-## A.1
+## A.1.1
+```shell
+xargs -I {} sh -c 'giggle search -i /mnt/backup/Zhu_lab/xxzhang/TE_InDel/8-epi_enrichment/split_sort_b/ -q "/home/xxzhang/Resource/Reference/GTF/TE_gtf/hg38_rmsk_TE_20240807/clade_family/{}.bed.gz" -s > {}.giggle.result '
+```
+
+## A.1.2
+
+#file:combine.all.giggle.result.sh
+
+```shell
+#!/bin/bash
+
+# 创建最终输出文件（先清空）
+> all.giggle.result
+
+# 查找并处理所有.giggle.result文件
+for file in ../*.giggle.result; do
+    # 提取文件名前缀（例如：Simiiformes_ERVK）
+    prefix=$(basename "$file" .giggle.result)
+    
+    # 添加前缀列到文件内容并追加到最终文件
+    # - 第一行添加列名"group"
+    # - 其他行添加$prefix值
+    awk -v pre="$prefix" '
+        NR==1 {print "group\t" $0}
+        NR>1 {print pre "\t" $0}
+    ' "$file" >> all.giggle.result
+done
+
+echo "合并完成！结果保存在 all.giggle.result"
+```
+
 
 ## A.2
-```r
+
+#file:all.giggle.result
+#all.giggle.positive.1020.result，这个文件是后面画细胞类型特异性的结果的时候用到的数据
 
 ```R
 data<-read.table("/home/xxzhang/Resource/Reference/GTF/TE_gtf/hg38_rmsk_TE_20240807/HM_global_0122/all.giggle.result",sep = "\t",fill=TRUE,na.strings = "",quote="",header=T)

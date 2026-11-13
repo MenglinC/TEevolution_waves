@@ -1,0 +1,7 @@
+#PBS -N Cortex
+#PBS -q gpu
+#PBS -M 2456392738@qq.com
+#PBS -m abe
+#PBS -l nodes=1:ppn=8
+cd  /home/xxzhang/Resource/Reference/GTF/TE_gtf/hg38_rmsk_TE_20240807/HM_global_0122/
+cat list.txt | xargs -I {} sh -c 'basename=$(basename {} .bed.gz); giggle search -i /home/xxzhang/Resource/Reference/HM_Roadmap/ -q {} -v -o > giggle.detailed.${basename}.txt'

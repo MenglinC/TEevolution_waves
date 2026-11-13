@@ -1,9 +1,7 @@
 # A
 
 ## A.0 consensus sequence
-
 ### 共识序列是怎么得到的？
-
 ```
 以6kb为全长的阈值，找到hg38人类基因组上全长的位点，在考虑链的信息下bedtools getfasta提取fasta序列，随后用mafft --auto --thread 8 L1PA6_6kb.fasta >align/align_L1PA6_6kb.fasta进行多序列比对；随后用consensusFretch.py找到每个家族的共识序列，最后去除gap区域（-），即为最终的共识序列；
 对于小鼠L1MdTf-I-5end的5-UTR共识序列，则直接从Dfam中下载，序列号为DF000001864；

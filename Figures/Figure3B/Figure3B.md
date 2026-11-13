@@ -18,7 +18,7 @@ cat list.txt | xargs -I {} sh -c 'basename=$(basename {} .bed.gz); giggle search
 
 ## B.1.2
 
-#file:
+#file:fig3b-epi-detailed-ratio.md
 
 ```r
 import csv
@@ -173,7 +173,7 @@ if __name__ == "__main__":
 
 ## B.1.3
 
-#file:
+#file:fig3b-NMF.md
 
 ```r
 setwd("/home/xxzhang/Resource/Reference/GTF/TE_gtf/hg38_rmsk_TE_20240807/HM_global_0122/")

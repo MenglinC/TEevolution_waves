@@ -1,0 +1,41 @@
+********************************************************************************
+STREME - Sensitive, Thorough, Rapid, Enriched Motif Elicitation
+********************************************************************************
+MEME version 5.5.9 (Release date: Fri Nov 21 15:33:51 2025 -0800)
+
+For further information on how to interpret these results please access https://meme-suite.org/meme.
+To get a copy of the MEME Suite software please access https://meme-suite.org.
+
+********************************************************************************
+
+
+********************************************************************************
+REFERENCE
+********************************************************************************
+If you use this program in your research, please cite:
+
+Timothy L. Bailey,
+"STREME: accurate and versatile sequence motif discovery",
+Bioinformatics, Mar. 24, 2021.
+********************************************************************************
+
+
+ALPHABET= ACGT
+
+strands: + -
+
+Background letter frequencies
+A 0.181 C 0.319 G 0.319 T 0.181 
+
+MOTIF 1-GGGGGAGGGG STREME-1
+letter-probability matrix: alength= 4 w= 10 nsites= 941 E= 4.0e-035
+ 0.000032 0.000057 0.999879 0.000032
+ 0.000032 0.000057 0.999879 0.000032
+ 0.000032 0.000057 0.999879 0.000032
+ 0.000032 0.000171 0.999765 0.000032
+ 0.000032 0.000057 0.999879 0.000032
+ 0.872109 0.018011 0.000057 0.109823
+ 0.032339 0.000057 0.886894 0.080711
+ 0.000032 0.000057 0.999879 0.000032
+ 0.000032 0.000057 0.999879 0.000032
+ 0.000032 0.000057 0.999879 0.000032

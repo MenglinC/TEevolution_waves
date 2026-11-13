@@ -1,5 +1,8 @@
 # A
 
+#file:figure4a.R
+#input:L1PA.LINSI.261001.fasta
+
 ```r
 
 library(Biostrings)

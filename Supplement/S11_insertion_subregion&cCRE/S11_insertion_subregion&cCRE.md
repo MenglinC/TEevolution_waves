@@ -3,6 +3,7 @@
 ## S11.1 subregion
 
 ```r
+#workplace:F:\tmp\07-31-figure2重新画图\res.gene
 #file:chipseeker.R
 ############################################################
 ## 使用 ChIPseeker 注释 BED8 格式的转座子区间
@@ -214,6 +215,7 @@ plotAnnoPie(peak_annotation)
 ## S11.2 cCRE
 
 ```r
+#workplace:F:\tmp\08-04-fig2-CNTN1
 #cCREpieplot.R
 setwd("F://08-04")
 data<-unique(read.table("summary.all.cCRE.Hominoidea.v3.genes.centre.TE.txt"))#188

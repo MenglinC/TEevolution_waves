@@ -6,11 +6,11 @@
 
 cp "/home/xxzhang/Resource/Reference/Genome/homo_sapiens/T2T/hs1.genome" ./
 awk 'BEGIN{OFS="\t"}{print $1,0,$2}' hs1.genome > hs1.genome.bed
-bedtools intersect -a hs1.genome.bed -b "/home/xxzhang/Resource/Reference/GTF/TE_gtf/T2T/clade_family/non-Primates_L1.bed" -c > chr_counts_non-Primates.bed
-bedtools intersect -a hs1.genome.bed -b "/home/xxzhang/Resource/Reference/GTF/TE_gtf/T2T/clade_family/Primates_L1.bed" -c > chr_counts_Primates.bed
-bedtools intersect -a hs1.genome.bed -b "/home/xxzhang/Resource/Reference/GTF/TE_gtf/T2T/clade_family/Catarrhini_L1.bed" -c > chr_counts_Catarrhini.bed
-bedtools intersect -a hs1.genome.bed -b "/home/xxzhang/Resource/Reference/GTF/TE_gtf/T2T/clade_family/Simiiformes_L1.bed" -c >chr_counts_Simiiformes.bed
-bedtools intersect -a hs1.genome.bed -b "/home/xxzhang/Resource/Reference/GTF/TE_gtf/T2T/clade_family/Hominoidea_L1.bed" -c >chr_counts_Hominoidea.bed
+bedtools intersect -a hs1.genome.bed -b "/home/xxzhang/Resource/Reference/GTF/TE_gtf/T2T/clade_family_bp/non-Primates_L1.bed" -c > chr_counts_non-Primates.bed
+bedtools intersect -a hs1.genome.bed -b "/home/xxzhang/Resource/Reference/GTF/TE_gtf/T2T/clade_family_bp/Primates_L1.bed" -c > chr_counts_Primates.bed
+bedtools intersect -a hs1.genome.bed -b "/home/xxzhang/Resource/Reference/GTF/TE_gtf/T2T/clade_family_bp/Catarrhini_L1.bed" -c > chr_counts_Catarrhini.bed
+bedtools intersect -a hs1.genome.bed -b "/home/xxzhang/Resource/Reference/GTF/TE_gtf/T2T/clade_family_bp/Simiiformes_L1.bed" -c >chr_counts_Simiiformes.bed
+bedtools intersect -a hs1.genome.bed -b "/home/xxzhang/Resource/Reference/GTF/TE_gtf/T2T/clade_family_bp/Hominoidea_L1.bed" -c >chr_counts_Hominoidea.bed
 ```
 
 

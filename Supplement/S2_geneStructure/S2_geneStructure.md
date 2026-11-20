@@ -2,10 +2,9 @@
 
 ## S2.1
 ```shell
-#workplace:
-#giggle
-
-
+#workplace:/home/xxzhang/Resource/Reference/GTF/TE_gtf/hg38_rmsk_TE_20240807/clade_family/giggle_geneRegion/
+#giggle index:/mnt/backup/Zhu_lab/xxzhang/TE_InDel/4-geneRegion/combine_index_v412/combine_chr1-X_sort_b/
+giggle search -i /mnt/backup/Zhu_lab/xxzhang/TE_InDel/4-geneRegion/combine_index_v412/combine_chr1-X_sort_b/ -q "/home/xxzhang/Resource/Reference/GTF/TE_gtf/hg38_rmsk_TE_20240807/clade_family/Simiiformes_L1.bed.gz" -s > Simiiformes_L1.giggle.result"
 
 ```
 

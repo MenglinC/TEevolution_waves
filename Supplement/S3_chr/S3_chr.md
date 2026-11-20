@@ -11,11 +11,6 @@ bedtools intersect -a hs1.genome.bed -b "/home/xxzhang/Resource/Reference/GTF/TE
 bedtools intersect -a hs1.genome.bed -b "/home/xxzhang/Resource/Reference/GTF/TE_gtf/T2T/clade_family/Catarrhini_L1.bed" -c > chr_counts_Catarrhini.bed
 bedtools intersect -a hs1.genome.bed -b "/home/xxzhang/Resource/Reference/GTF/TE_gtf/T2T/clade_family/Simiiformes_L1.bed" -c >chr_counts_Simiiformes.bed
 bedtools intersect -a hs1.genome.bed -b "/home/xxzhang/Resource/Reference/GTF/TE_gtf/T2T/clade_family/Hominoidea_L1.bed" -c >chr_counts_Hominoidea.bed
-bedtools intersect -a hs1.genome.bed -b "/home/xxzhang/Resource/Reference/GTF/TE_gtf/T2T/clade_family/non-Primates_L1.bed" -c > chr_counts_non-Primates.bed
-bedtools intersect -a hs1.genome.bed -b "/home/xxzhang/Resource/Reference/GTF/TE_gtf/T2T/clade_family/Primates_L1.bed" -c > chr_counts_Primates.bed
-bedtools intersect -a hs1.genome.bed -b "/home/xxzhang/Resource/Reference/GTF/TE_gtf/T2T/clade_family/Simiiformes_L1.bed" -c >chr_counts_Simiiformes.bed
-bedtools intersect -a hs1.genome.bed -b "/home/xxzhang/Resource/Reference/GTF/TE_gtf/T2T/clade_family/Catarrhini_L1.bed" -c > chr_counts_Catarrhini.bed
-bedtools intersect -a hs1.genome.bed -b "/home/xxzhang/Resource/Reference/GTF/TE_gtf/T2T/clade_family/Hominoidea_L1.bed" -c >chr_counts_Hominoidea.bed
 ```
 
 
@@ -23,41 +18,76 @@ bedtools intersect -a hs1.genome.bed -b "/home/xxzhang/Resource/Reference/GTF/TE
 
 ```r
 #file:http://localhost:8888/notebooks/chr_enrichment_hs1.ipynb
-setwd("/home/xxzhang/Resource/Reference/GTF/TE_gtf/T2T/chr_enrichment/")
+
 library(dplyr)
+# 设置目录
+base_dir <- "/home/xxzhang/Resource/Reference/GTF/TE_gtf/T2T/chr_enrichment/"
 
-chr_data <- read.table(
-  "chr_counts_Hominoidea.bed",
-  header = FALSE,
-  sep = "\t",
-  col.names = c("chr", "start", "end", "observed")
+# 获取所有以 chr_count 开头的文件
+files <- list.files(
+  path = base_dir,
+  pattern = "^chr_count",
+  full.names = TRUE
 )
-chr_result <- chr_data %>%
-  mutate(
-    observed = as.numeric(observed),
-    start = as.numeric(start),
-    end = as.numeric(end),
-    chr_length = end - start
-  ) %>%
-  mutate(
-    genome_fraction = chr_length / sum(chr_length, na.rm = TRUE),
-    expected = sum(observed, na.rm = TRUE) * genome_fraction,
-    density_per_Mb = observed / chr_length * 1e6,
-    enrichment = observed / expected
+
+# 批量处理
+lapply(files, function(file) {
+
+  # 读取数据
+  chr_data <- read.table(
+    file,
+    header = FALSE,
+    sep = "\t",
+    col.names = c("chr", "start", "end", "observed")
   )
-write.table(
-  chr_result,
-  "chr_enrich_Hominoidea_L1.tsv",
-  sep = "\t",
-  quote = FALSE,
-  row.names = FALSE
-)
 
-dat1<-read.table("chr_enrich_non-Primates_L1.tsv",header=T)[,c(1,9)]
-dat2<-read.table("chr_enrich_Primates_L1.tsv",header=T)[,c(1,9)]
-dat3<-read.table("chr_enrich_Simiiformes_L1.tsv",header=T)[,c(1,9)]
-dat4<-read.table("chr_enrich_Catarrhini_L1.tsv",header=T)[,c(1,9)]
-dat5<-read.table("chr_enrich_Hominoidea_L1.tsv",header=T)[,c(1,9)]
+  # 计算染色体富集
+  chr_result <- chr_data %>%
+    mutate(
+      observed = as.numeric(observed),
+      start = as.numeric(start),
+      end = as.numeric(end),
+      chr_length = end - start
+    ) %>%
+    mutate(
+      genome_fraction = chr_length / sum(chr_length, na.rm = TRUE),
+      expected = sum(observed, na.rm = TRUE) * genome_fraction,
+      density_per_Mb = observed / chr_length * 1e6,
+      enrichment = observed / expected
+    )
+
+  # 生成输出文件名
+  output_file <- file.path(
+    base_dir,
+    sub("^chr_count", "chr_enrich", basename(file))
+  )
+
+  # 输出结果
+  write.table(
+    chr_result,
+    output_file,
+    sep = "\t",
+    quote = FALSE,
+    row.names = FALSE
+  )
+
+  cat("Finished:", basename(file), "\n")
+})
+
+cat("All files processed!\n")
+
+```
+
+## S3.3
+
+```r
+setwd("/home/xxzhang/Resource/Reference/GTF/TE_gtf/T2T/chr_enrichment/")
+
+dat1<-read.table("chr_enrichs_non-Primates_L1.tsv",header=T)[,c(1,9)]
+dat2<-read.table("chr_enrichs_Primates_L1.tsv",header=T)[,c(1,9)]
+dat3<-read.table("chr_enrichs_Simiiformes_L1.tsv",header=T)[,c(1,9)]
+dat4<-read.table("chr_enrichs_Catarrhini_L1.tsv",header=T)[,c(1,9)]
+dat5<-read.table("chr_enrichs_Hominoidea_L1.tsv",header=T)[,c(1,9)]
 
 dat12<-merge(dat1,dat2,by="chr")
 dat123<-merge(dat12,dat3,by="chr")
@@ -103,3 +133,4 @@ p1
 dev.off()
 
 ```
+

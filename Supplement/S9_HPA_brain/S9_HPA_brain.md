@@ -2,6 +2,7 @@
 
 ```r
 #file:fig2-genes-brain-enriched.R
+#workplace:F://10-19//fig2-reanalysis
 
 # 安装包（如果未安装）
 #if (!require("BiocManager", quietly = TRUE))

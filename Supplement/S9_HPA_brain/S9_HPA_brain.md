@@ -3,24 +3,12 @@
 ```r
 #file:fig2-genes-brain-enriched.R
 #workplace:F://10-19//fig2-reanalysis
+#1121，整理的时候又修改了一版
 
-# 安装包（如果未安装）
-#if (!require("BiocManager", quietly = TRUE))
-#  install.packages("BiocManager")
-#BiocManager::install(c("clusterProfiler", "org.Hs.eg.db", "DOSE"))
+#####################################################################
+#与背景基因相比做富集；
 
-# 加载包
-#library(clusterProfiler)
-#library(org.Hs.eg.db)
-#library(ggplot2)
-#library(dplyr)
-
-#gene1 <- read.csv("../gene_patterns_lineage_SYMBOL.csv", header = TRUE)#1000
-#gene2 <- read.csv("../gene_patterns_lineage_SYMBOL.csv", header = TRUE) #100
-#gene3 <- read.csv("../gene_patterns_lineage_SYMBOL.csv", header = TRUE) #10
-#gene4 <- read.csv("../gene_patterns_lineage_SYMBOL.csv", header = TRUE) #1
-
-setwd("F://10-19//fig2-reanalysis")
+setwd("F://tmp//10-19//fig2-reanalysis")
 # gene <- read.csv("gene_patterns_lineage_SYMBOL_0731.csv", header = TRUE)#1000
 # 
 # genes0 <- grep("[-|.]", gene[gene$pattern==10000,]$gene, invert = TRUE, value = TRUE)#174 非人灵长类
@@ -37,7 +25,7 @@ genes4<-read.csv("F://tmp//07-31-figure2重新画图//res.gene//Hominoidea_HDG_0
 
 brain.enriched<-read.table("tissue_category_rna_brain_Tissue-group1.tsv",sep = "\t",header = T)$Gene
 brain.group<-read.table("tissue_category_rna_brain_Tissue-group2.tsv",sep = "\t",header = T)$Gene
-brain.enhanced<-read.table("tissue_category_rna_brain_Tissue-group3.tsv",sep = "\t",header = T)$Gene
+brain.enhanced<-read.table("tissue_category_rna_brain_Tissue-group3-1121-999.tsv",sep = "\t",header = T)$Gene
 
 library(dplyr)
 library(ggplot2)
@@ -55,52 +43,179 @@ gene_sets <- list(
 # 替换成筛选 HDG 时使用的全部候选基因
 background <- read.table("proteinGene.bed")$V4 #20030
 
-background <- unique(na.omit(background))
-brain <- intersect(unique(na.omit(brain.group)), background) ##这里
+#################################################
+#先一个一个看吧；
+library(dplyr)
+library(ggplot2)
 
-# 3. 计算富集
-results <- lapply(names(gene_sets), function(group) {
+# 1. 定义三个 brain gene sets
+brain_sets <- list(
+  "Tissue enriched" = brain.enriched,
+  "Group enriched" = brain.group,
+  "Tissue enhanced" = brain.enhanced
+)
+
+# 2. 背景基因
+background <- unique(na.omit(background))
+
+# 3. 批量富集
+results <- lapply(names(brain_sets), function(category) {
   
-  genes <- intersect(
-    unique(na.omit(gene_sets[[group]])),
+  brain <- intersect(
+    unique(na.omit(brain_sets[[category]])),
     background
   )
   
-  a <- length(intersect(genes, brain))
-  b <- length(genes) - a
-  c <- length(brain) - a
-  d <- length(background) - a - b - c
+  lapply(names(gene_sets), function(group) {
+    
+    genes <- intersect(
+      unique(na.omit(gene_sets[[group]])),
+      background
+    )
+    
+    a <- length(intersect(genes, brain))
+    b <- length(genes) - a
+    c <- length(brain) - a
+    d <- length(background) - a - b - c
+    
+    mat <- matrix(
+      c(a, b, c, d),
+      nrow = 2,
+      byrow = TRUE
+    )
+    
+    ft <- fisher.test(
+      mat,
+      alternative = "greater"
+    )
+    
+    observed <- a / length(genes)
+    expected <- length(brain) / length(background)
+    
+    fold_enrichment <- observed / expected
+    
+    data.frame(
+      Category = category,
+      Group = group,
+      HDG_total = length(genes),
+      Brain_total = length(brain),
+      Brain_HDG = a,
+      Brain_fraction = observed,
+      Fold_Enrichment = fold_enrichment,
+      Odds_Ratio = unname(ft$estimate),
+      P_value = ft$p.value
+    )
+    
+  }) %>% bind_rows()
   
-  mat <- matrix(
-    c(a, b, c, d),
-    nrow = 2,
-    byrow = TRUE
-  )
-  
-  ft <- fisher.test(mat, alternative = "greater")
-  
-  # Fold Enrichment
-  observed <- a / length(genes)
-  expected <- length(brain) / length(background)
-  fold_enrichment <- observed / expected
-  
-  data.frame(
-    Group = group,
-    HDG_total = length(genes),
-    Brain_HDG = a,
-    Brain_fraction = observed,
-    Fold_Enrichment = fold_enrichment,
-    Odds_Ratio = unname(ft$estimate),
-    P_value = ft$p.value
-  )
 }) %>%
   bind_rows() %>%
   mutate(
-    FDR = p.adjust(P_value, method = "BH")
+    FDR = p.adjust(P_value, method = "BH"),
+    log2FE = log2(Fold_Enrichment)
   )
 
 print(results)
 
+write.table(
+  results,
+  "Brain_HDG_enrichment.tsv",
+  sep = "\t",
+  quote = FALSE,
+  row.names = FALSE
+)
+
+library(ggplot2)
+library(dplyr)
+
+plot_data <- results %>%
+  mutate(
+    Group = factor(
+      Group,
+      levels = c(
+        "non-Primates",
+        "Primates",
+        "Simiiformes",
+        "Catarrhini",
+        "Hominoidea"
+      )
+    ),
+    Category = factor(
+      Category,
+      levels = c(
+        "Tissue enhanced",
+        "Group enriched",
+        "Tissue enriched"
+      )
+    ),
+    
+    # 只有显著正向富集的格子才显示颜色
+    OR_plot = ifelse(
+      FDR < 0.05 & Odds_Ratio > 1,
+      Odds_Ratio,
+      NA_real_
+    )
+  )
+
+p <- ggplot(
+  plot_data,
+  aes(x = Group, y = Category)
+) +
+  # 所有格子白色背景
+  geom_tile(
+    fill = "white",
+    color = "grey85",
+    linewidth = 0.4,
+    width = 0.96,
+    height = 0.96
+  ) +
+  # 只有显著富集的格子填色
+  geom_tile(
+    aes(fill = OR_plot),
+    color = NA,
+    width = 0.96,
+    height = 0.96
+  ) +
+  geom_text(
+    aes(label = ifelse(!is.na(OR_plot), sprintf("%.2f", OR_plot), "")),
+    color = "white",
+    size = 3.5,
+    fontface = "bold"
+  ) +
+  scale_fill_gradient(
+    low = "#974956",
+    high = "#581F30",
+    name = "Odds ratio",
+    na.value = "transparent"
+  ) +
+  labs(
+    x = NULL,
+    y = NULL
+  ) +
+  theme_minimal(base_size = 11) +
+  theme(
+    panel.grid = element_blank(),
+    axis.text.x = element_text(
+      angle = 35,
+      hjust = 1,
+      color = "black",
+      size = 10
+    ),
+    axis.text.y = element_text(
+      color = "black",
+      size = 10
+    ),
+    axis.ticks = element_blank(),
+    legend.position = "none",
+    plot.margin = margin(10, 10, 10, 10)
+  )
+
+print(p)
+
+
+pdf("S4_1_1121.pdf",width =4,height =2)
+p
+dev.off()
 
 ################################################################################
 

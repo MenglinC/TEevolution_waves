@@ -32,6 +32,10 @@ python window_500kb_enrichment.py \
 ## D.3 plot
 
 ```r
+#workplace：F:\tmp\11-08-SD富集\fig1-SD富集
+#file：Fig1_OR_FDR_bubble_white.R
+
+
 # Fig1 TE hotspot enrichment bubble plot — white background (no grey tiles)
 # Input: Fig1_enrichment.tsv
 # Required columns: feature, feature_type, TE_group, FDR, log2_OR_plot

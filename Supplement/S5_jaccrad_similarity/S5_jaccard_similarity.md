@@ -286,6 +286,44 @@ combined_plot2
 dev.off()
 
 ```
+non-Primates_L1
+5835
+non-Primates_ERV1
+5537
+Primates_L1
+5793
+Primates_ERV1
+5764
+Primates_Alu
+5837
+Simiiformes_L1
+5528
+Simiiformes_ERV1
+274
+Simiiformes_Alu
+5832
+Simiiformes_ERVK
+257
+Catarrhini_L1
+5099
+Catarrhini_ERV1
+3887
+Catarrhini_Alu
+5831
+Catarrhini_ERVK
+2822
+Hominoidea_L1
+5200
+Hominoidea_ERV1
+2104
+Hominoidea_Alu
+5643
+Hominoidea_ERVK
+1105
+Hominoidea_SVA
+2788
+
+这里统计的是非零值的比例。
 
 6125	0.01,1%	0.02,2%	0.05,5%
 	61.25	122.5	306.25,这个就已经超了257，余下来的都是空的；不合适

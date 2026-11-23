@@ -3,6 +3,46 @@
 ## S4.1 consistence
 ```shell
 
+grep -v '^#' hs1_unique.bed \
+    | sort -k1,1 -k2,2n \
+    | bedtools merge -i - \
+    > hs1_unique.merge.bed
+
+grep -v '^#' CenSat_hs1.bed \
+    | sort -k1,1 -k2,2n \
+    | bedtools merge -i - \
+> CenSat_hs1.merge.bed
+
+awk '{sum += $3-$2} END {print sum+0}' \
+hs1_unique.merge.bed
+
+bedtools intersect \
+    -a hs1_unique.merge.bed \
+    -b CenSat_hs1.merge.bed \
+    | sort -k1,1 -k2,2n \
+    | bedtools merge -i - \
+> overlap.bed
+
+awk '{sum += $3-$2} END {print sum+0}' overlap.bed
+
+total=$(awk '{s+=$3-$2} END {print s+0}' hs1_unique.merge.bed)
+
+overlap=$(awk '{s+=$3-$2} END {print s+0}' overlap.bed)
+
+awk -v t="$total" -v o="$overlap" 'BEGIN {
+    printf "Total new sequence: %d bp\n", t
+    printf "Overlapping sequence: %d bp\n", o
+    printf "Overlap fraction: %.2f%%\n", o/t*100
+}'
+
+#workplace: /home/xxzhang/Resource/Reference/Genome/homo_sapiens/T2T/Annotation/tmp/
+
+[xxzhang@mu02 tmp]$ bash compute.bash
+251330203
+242169662
+Total new sequence: 251330203 bp
+Overlapping sequence: 242169662 bp
+Overlap fraction: 96.36%
 
 ```
 
